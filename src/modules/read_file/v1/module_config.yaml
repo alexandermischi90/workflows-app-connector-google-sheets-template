@@ -1,0 +1,3 @@
+module_settings:
+  module_name: "Read Google Sheets File"
+  module_description: "This module reads data from an existing Google Sheets file in the user's Google Drive and return it's content as a json"

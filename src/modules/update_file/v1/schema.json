@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "workflows_module_schema_version": "1.0.0"
+  },
+  "fields": [
+    {
+      "id": "file_name",
+      "type": "string",
+      "description": "The name of the Google Sheet file to be deleted (e.g. 'MyNewSheet').",
+      "label": "old file name",
+      "validation": {
+        "required": true
+      },
+      "ui_options": {
+        "ui_widget": "SelectWidget"
+      },
+      "choices": {
+      "values": []
+      },
+      "content": {
+        "type": ["managed"],
+        "content_objects": [
+          {
+            "id": "file_names"
+          }
+        ],
+        "content_object_depends_on_fields": [{
+          "id": "google_drive_credentials"
+        }]
+      }
+    },
+    {
+      "id": "new_file_name",
+      "type": "string",
+      "description": "The new name for the Google Sheet file (e.g. 'MyRenamedSheet').",
+      "label": "new file name",
+      "validation": {
+        "required": true
+      }
+    },
+    {
+      "id": "google_drive_credentials",
+      "type": "string",
+      "label": "google-drive-credentials.json",
+      "description": "Paste the entire content of your google-drive-credentials.json file here.",
+      "validation": {
+        "required": true
+      },
+      "ui_options": {
+        "ui_widget": "CodeblockWidget",
+        "ui_options": {
+          "language": "json"
+        }
+      }
+    }
+  ],
+  "ui_options": {
+    "ui_order": ["google_drive_credentials", "file_name", "new_file_name"]
+  }
+}

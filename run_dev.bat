@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM Parse command line arguments
-set "REBUILD=false"
+set "REBUILD=true"
 for %%a in (%*) do (
     if "%%a"=="--build" set "REBUILD=true"
 )
@@ -10,11 +10,6 @@ for %%a in (%*) do (
 REM Print Stacksync branding
 echo.
 echo [96m  ____  _             _                           [0m
-echo [96m / ___|| |_ __ _  ___| | _____ _   _ _ __   ___  [0m
-echo [96m \___ \| __/ _` |/ __| |/ / __| | | | '_ \ / __| [0m
-echo [96m  ___) | || (_| | (__|   <\__ \ |_| | | | | (__  [0m
-echo [96m |____/ \__\__,_|\___|_|\_\___/\__, |_| |_|\___| [0m
-echo [96m                               |___/             [0m
 echo.
 echo [92mApp Connector Public Module[0m
 echo [94mDocumentation: https://docs.stacksync.com/workflows/app-connector[0m
@@ -70,7 +65,7 @@ if "%IMAGE_EXISTS%"=="" (
 ) else (
     if "%REBUILD%"=="true" (
         echo Forcing rebuild of Docker image: %APP_NAME%
-        docker build --no-cache -t %APP_NAME% -f %DOCKERFILE_PATH% .
+        docker build -t %APP_NAME% -f %DOCKERFILE_PATH% .
     ) else (
         echo Docker image %APP_NAME% already exists. Skipping build.
         echo Use --build flag to force a rebuild.
@@ -79,6 +74,6 @@ if "%IMAGE_EXISTS%"=="" (
 
 REM Run the container
 echo Starting container on port %PORT%...
-docker run --rm -p %PORT%:%PORT% -it -e ENVIRONMENT=dev -e REGION=besg --name=%APP_NAME% -v %CD%:/usr/src/app/ %APP_NAME%
+docker run --rm -p %PORT%:%PORT% -it -e ENVIRONMENT=dev -e REGION=besg --name=%APP_NAME%  %APP_NAME%
 
 endlocal 

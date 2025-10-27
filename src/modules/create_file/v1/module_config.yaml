@@ -1,0 +1,3 @@
+module_settings:
+  module_name: "Create a Google Sheets File"
+  module_description: "This module creates a new Google Sheets file in the user's Google Drive."

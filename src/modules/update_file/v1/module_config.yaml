@@ -1,0 +1,3 @@
+module_settings:
+  module_name: "Update a Google Sheets File"
+  module_description: "This module renames an existing Google Sheets file in the user's Google Drive."

@@ -1,6 +1,5 @@
 # Use a lightweight Python image
-FROM python:3.10-slim-buster
-
+FROM python:3.11-slim-bookworm
 WORKDIR /usr/src/app
 
 # Install system dependencies
@@ -15,6 +14,9 @@ RUN pip install --upgrade pip
 
 # Install Python dependencies
 RUN pip install git+https://github.com/stacksyncdata/workflows-cdk.git@prod
+
+RUN pip uninstall -y google-auth google-api-python-client google-auth-httplib2 google-auth-oauthlib google-api-core cryptography
+RUN pip cache purge
 
 # install dependencies
 COPY requirements.txt ./
