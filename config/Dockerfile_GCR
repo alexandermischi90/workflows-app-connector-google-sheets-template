@@ -1,0 +1,57 @@
+# Dockerfile that can easily be deployed with google cloud run
+
+# Use a lightweight Python image
+FROM python:3.11-slim-bookworm
+WORKDIR /usr/src/app
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y git curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# upgrade to latest pip
+RUN pip install --upgrade pip
+
+# Install Python dependencies
+RUN pip install git+https://github.com/stacksyncdata/workflows-cdk.git@prod
+
+RUN pip uninstall -y google-auth google-api-python-client google-auth-httplib2 google-auth-oauthlib google-api-core cryptography
+RUN pip cache purge
+
+# install dependencies
+COPY requirements.txt ./
+RUN pip3 install -r requirements.txt
+
+# copy the scripts
+COPY . .
+
+# Make sure the entrypoint is executable
+RUN chmod +x ./config/entrypoint.sh
+
+# Default command to run the app
+CMD ["python", "main.py"]
+
+# setup flask server
+# expose port
+EXPOSE 8080 
+
+#set environment variable on linux: export PORT=2001
+CMD exec gunicorn main:app --bind 0.0.0.0:${PORT:-8080} --config=config/gunicorn_config.py
+
+# To use Flask default development server
+# ENTRYPOINT ["python"]
+# CMD ["/usr/src/app/main.py"]
+
+# RUN in interactive mode
+# UNIX: docker run --rm -p 2003:2003 -it -e ENVIRONMENT=dev -e REGION=besg --name=workflows-app-connector -v $PWD:/usr/src/app/ workflows-app-connector
+# Windows: docker run --rm -p 2001:2001 -it -e ENVIRONMENT=dev -e REGION=besg --name=workflows-app-connector -v ${PWD}:/usr/src/app/ workflows-app-connector
+
+# BUILD container
+# docker build -t workflows-app-connector -f config/Dockerfile.dev .
+# docker build --no-cache -t workflows-app-connector -f config/Dockerfile.dev .
+
+# CONNECT to container terminal
+# docker exec -it workflows-app-connector bash
+

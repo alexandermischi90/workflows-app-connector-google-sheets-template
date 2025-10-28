@@ -11,7 +11,7 @@ from main import router
 @router.route("/execute", methods=["GET", "POST"])
 def execute():
     """
-    This is the function that is executed when you click on "Run" on a workflow that uses this action.
+    create an empty Google Sheets file with the given name and optionally share it with an email.
     """
     try:
         # Parse the request
@@ -19,22 +19,16 @@ def execute():
 
         data = request.data
 
-        # NO parameter validation (should be validated by the workflow engine itself and not necessary here)
-
-        # write credentials file to temp location
+        # credentials, dict
         credentials = data['google_drive_credentials']
-        # ensure correct format
-        assert isinstance(credentials, dict), "Credentials must be a json"
-        tmp_path = '/tmp/credentials.json'
-        with open(tmp_path, 'w', encoding='utf-8') as cred_file:
-            json.dump(credentials, cred_file)
 
         # initialize connector
-        gs_connector = GoogleSheets(tmp_path)
+        gs_connector = GoogleSheets(credentials)
 
         # create empty file
         file_name = data['file_name']
-        url = gs_connector.create(file_name, emails=['alexander.mischi@gmail.com'])
+        email = data.get('email')
+        url = gs_connector.create(file_name, emails=[email] if email else [])
 
         # Return results
         return Response(

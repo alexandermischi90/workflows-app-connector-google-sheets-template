@@ -6,7 +6,7 @@
     {
       "id": "file_name",
       "type": "string",
-      "description": "The name of the Google Sheet file to be deleted (e.g. 'MyNewSheet').",
+      "description": "The name of the Google Sheet file you want to read (e.g. 'MyNewSheet').",
       "label": "file name",
       "validation": {
         "required": true

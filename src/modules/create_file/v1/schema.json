@@ -13,6 +13,15 @@
       }
     },
     {
+      "id": "email",
+      "type": "string",
+      "description": "Enter an email address to grant read and edit permissions for the new file.",
+      "label": "email",
+      "validation": {
+        "required": false
+      }
+    },
+    {
       "id": "google_drive_credentials",
       "type": "string",
       "label": "google-drive-credentials.json",
@@ -29,6 +38,6 @@
     }
   ],
   "ui_options": {
-    "ui_order": ["file_name", "google_drive_credentials"]
+    "ui_order": ["file_name", "email", "google_drive_credentials"]
   }
 }

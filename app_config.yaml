@@ -1,8 +1,8 @@
 app_settings:
-  app_type: "connector" # only lowercase letters, numbers, and underscores are allowed, e.g. salesforce, sap, zoho_crm, etc.
-  app_name: "Connector Example App"
-  app_icon_svg_url: "https://cdn.brandfetch.io/id9Bpy_H9O/theme/dark/idl_D0lOl6.svg?c=1dxbfHSJFAPEGdCLU4o5B" # this is the icon of the app, should be a URL pointing to a SVG file.
-  app_description: "Connector Example App"
+  app_type: "connector"
+  app_name: "Google Sheets"
+  app_icon_svg_url: "https://upload.wikimedia.org/wikipedia/commons/3/30/Google_Sheets_logo_%282014-2020%29.svg"
+  app_description: "This connector allows you to create, read, rename and delete Google Sheets files in your Google Drive."
   routes_directory: "src/modules" # this is the directory where the modules are located.
 
 local_development_settings:

@@ -7,6 +7,7 @@ from src.utils.gs_connector import GoogleSheets
 
 from main import router
 
+
 @router.route("/execute", methods=["GET", "POST"])
 def execute():
     """
@@ -17,26 +18,20 @@ def execute():
         request = Request(flask_request)
         data = request.data
 
-        # NO parameter validation (should be validated by the workflow engine itself and not necessary here)
-
-        # write credentials file to temp location
+        # credentials, dict
         credentials = data['google_drive_credentials']
-        # ensure correct format
-        assert isinstance(credentials, dict), "Credentials must be a json"
-        tmp_path = '/tmp/credentials.json'
-        with open(tmp_path, 'w', encoding='utf-8') as cred_file:
-            json.dump(credentials, cred_file)
 
         # initialize connector
-        gs_connector = GoogleSheets(tmp_path)
+        gs_connector = GoogleSheets(credentials)
 
-        # delete file
+        # read file
         file_name = data['file_name']
-        url = gs_connector.get_spreadsheet(file_name)
+        output_type = data.get('output_type', 'JSON')  # TODO implement other types if needed
+        data = gs_connector.get_spreadsheet(file_name, format=output_type)
 
         # Return results
         return Response(
-            data={'file_name': file_name, 'url': url},
+            data={'file_name': file_name, 'data': data},
             metadata={
                 "processed_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "message": f"Created file '{file_name}' successfully."
@@ -51,59 +46,17 @@ def execute():
 @router.route("/content", methods=["GET", "POST"])
 def content():
     """
-    This is the function that goes and fetches the necessary data to populate the possible choices in dynamic form fields.
-    For example, if you have a module to delete a contact, you would need to fetch the list of contacts to populate the dropdown
-    and give the user the choice of which contact to delete.
-
-    An action's form may have multiple dynamic form fields, each with their own possible choices. Because of this, in the /content route,
-    you will receive a list of content_object_names, which are the identifiers of the dynamic form fields. A /content route may be called for one or more content_object_names.
-
-    Every data object takes the shape of:
-    {
-        "value": "value",
-        "label": "label"
-    }
-    
-    Args:
-        data:
-            form_data:
-                form_field_name_1: value1
-                form_field_name_2: value2
-            content_object_names:
-                [
-                    {   "id": "content_object_name_1"   }
-                ]
-        credentials:
-            connection_data:
-                value: (actual value of the connection)
-
-    Return:
-        {
-            "content_objects": [
-                {
-                    "content_object_name": "content_object_name_1",
-                    "data": [{"value": "value1", "label": "label1"}]
-                },
-                ...
-            ]
-        }
+    This fetches a list of Google Sheets file names to populate a dynamic dropdown field.
     """
     try:
         request = Request(flask_request)
         data = request.data
 
-        # NO parameter validation (should be validated by the workflow engine itself and not necessary here)
-
-        # write credentials file to temp location - arrives as a str!
-        credentials = data['form_data']['google_drive_credentials']
-        # ensure correct format
-        assert isinstance(credentials, str), "Credentials must be a str"
-        tmp_path = '/tmp/credentials.json'
-        with open(tmp_path, 'w', encoding='utf-8') as cred_file:
-            cred_file.write(credentials)
+        # credentials, dict
+        credentials = json.loads(data['form_data']['google_drive_credentials'])
 
         # initialize connector
-        gs_connector = GoogleSheets(tmp_path)
+        gs_connector = GoogleSheets(credentials)
 
         # fetch file names
         result = gs_connector.get_file_list()

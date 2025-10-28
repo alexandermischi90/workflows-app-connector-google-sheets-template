@@ -29,4 +29,7 @@ logs/
 # Distribution / packaging
 dist/
 build/
-*.egg-info/ 
+*.egg-info/
+
+# test credentials file
+credentials.json
